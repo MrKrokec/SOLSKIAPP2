@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import {
-  StyleSheet, Text, TextInput, TouchableOpacity, View,
-  FlatList, SafeAreaView,Alert
-} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect, useState } from 'react';
+import {
+  Alert,
+  FlatList, SafeAreaView,
+  StyleSheet, Text, TextInput, TouchableOpacity, View
+} from 'react-native';
 
 interface Activity {
   id:string;
@@ -65,7 +66,7 @@ export default function ManageScreen() {
     Alert.alert('Uspeh', 'Aktivnost je bila uspesno dodana');
   };
 
-  const handleDelete= (id.string) => {
+  const handleDelete= (id: string) => {
     const updated= activities.filter((item) => item.id !== id);
     saveActivitiesObject(updated);
   };
@@ -120,7 +121,7 @@ export default function ManageScreen() {
               <Text style={styles.rowTitle}>{item.title}</Text>
               <Text style={styles.rowSub}>{item.subject} - {item.date}</Text>
             </View>
-            
+
             <TouchableOpacity onPress={() => handleDelete(item.id)}>
               <Ionicons name="trash-outline" size={22} color="#ff3b30" />
             </TouchableOpacity>
@@ -132,6 +133,7 @@ export default function ManageScreen() {
 }
 
 const styles = StyleSheet.create({
+
   container: { flex: 1, backgroundColor: '#f5f5f5', paddingHorizontal: 16, paddingTop: 40 },
   headerTitle: { fontSize: 24, fontWeight: 'bold', marginBottom: 12, color: '#333' },
   form: { backgroundColor: '#fff', padding: 16, borderRadius: 8, marginBottom: 16, elevation: 2 },

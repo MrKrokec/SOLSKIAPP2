@@ -3,13 +3,13 @@ import { Tabs } from 'expo-router';
 
 export default function TabLayout() {
   return(
-    <Tabs screenOptions={{ tabBarActiveTintColor: '#007AFF', headerShown: False}}>
+    <Tabs screenOptions={{ tabBarActiveTintColor: '#007AFF', headerShown: false}}>
       <Tabs.Screen 
       name="index"
       options={{
         title: 'Pregled',
         tabBarIcon: ({color, focused}) => (
-          <Ionicons name={focused ? 'home' : 'home-outline'} size={24} color={color} />
+          <Ionicons name={focused ? 'home' : 'home-outline'} size={24} color={color as string} />
         ),
       }}
       />
@@ -18,7 +18,7 @@ export default function TabLayout() {
         options={{
           title: 'Upravljanje',
           tabBarIcon: ({color, focused}) => (
-            <Ionicons name={focused ? 'create' : 'create-outline'} size={24} color={color} />
+            <Ionicons name={focused ? 'create' : 'create-outline'} size={24} color={color as string} />
           ),
         }}
         />

@@ -1,7 +1,7 @@
-import React, { useState, useCallback } from 'react';
-import { StyleSheet, Text, View, FlatList, SafeAreaView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
+import { useCallback, useState } from 'react';
+import { FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 
 
@@ -34,11 +34,11 @@ export default function HomeScreen() {
   };
 
   return (
-    <SafeAreaView style={style.container}>
-      <Text style={styles.headerTitle}>Pregled Solskih aktivnosti</text>
-      {activities.lenght === 0 ? (
+    <SafeAreaView style={styles.container}>
+      <Text style={styles.headerTitle}>Pregled Solskih aktivnosti</Text>
+      {activities.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>Trenutno ni shranjenih aktivnosti.</text>
+          <Text style={styles.emptyText}>Trenutno ni shranjenih aktivnosti.</Text>
           </View>
       ) : (
         <FlatList
@@ -46,7 +46,13 @@ export default function HomeScreen() {
         keyExtractor={(item) => item.id}
         renderItem={({item, index}) => (
           <Animated.View entering={FadeInUp.delay(index * 100)} style={styles.card}>
-            </View>
+            <View>
+
+      <Text style={styles.activityTitle}>{item.title}</Text>
+      <Text style={styles.activitySubject}>Predmet: {item.subject}</Text>
+      <Text style={styles.activityDate}>Rok: {item.date}</Text>
+
+      </View>
             </Animated.View>
         )}
         />
