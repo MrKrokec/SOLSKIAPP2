@@ -1,98 +1,77 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useState, useCallback } from 'react';
+import { StyleSheet, Text, View, FlatList, SafeAreaView } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
+import Animated, { FadeInUp } from 'react-native-reanimated';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
+interface Activity {
+  id: string;
+  title: string;
+  subject: string;
+  date: string;
 }
 
 export default function HomeScreen() {
+  const [activities, setActivities]= useState<Activity[]>([]);
+
+
+  useFocusEffect(
+    useCallback(() => {
+      loadActivities();
+    }, [])
+  );
+
+  const loadActivities=async () => {
+    try {
+      const storedData=await AsyncStorage.getItem('@school_activities');
+      if (storedData) {
+        setActivities(JSON.parse(storedData));
+      }
+    } catch(error) {
+      console.error('Failed to load activities', error);
+    }
+  };
+
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
-
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
-
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
+    <SafeAreaView style={style.container}>
+      <Text style={styles.headerTitle}>Pregled Solskih aktivnosti</text>
+      {activities.lenght === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>Trenutno ni shranjenih aktivnosti.</text>
+          </View>
+      ) : (
+        <FlatList
+        data={activities}
+        keyExtractor={(item) => item.id}
+        renderItem={({item, index}) => (
+          <Animated.View entering={FadeInUp.delay(index * 100)} style={styles.card}>
+            </View>
+            </Animated.View>
+        )}
+        />
+      )}
       </SafeAreaView>
-    </ThemedView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
+const styles=StyleSheet.create({
+  container: {flex:1,backgroundColor: '#f5f5f5', paddingHorizontal: 16, paddingTop: 40},
+  headerTitle: {fontSize: 24, fontWeight: 'bold',marginBottom: 16, color: '#333'},
+  
+  card:{
+
+    backgroundColor: '#fff',
+    padding:16,
+    borderRadius: 8,
+    marginBottom: 12,
+    elevation: 3,
   },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
-  },
-  title: {
-    textAlign: 'center',
-  },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
-  },
-});
+
+  activityTitle:{fontSize:18,fontWeight:'600',color:'#007AFF'},
+  activitySubject:{fontSize:14,color:'#555',marginTop:4},
+  activityDate:{fontSize: 12, color:'#888', marginTop: 2 },
+  emptyContainer:{ flex: 1, justifyContent:'center', alignItems:'center' },
+  emptyText:{ fontSize: 16, color:'#666' },
+  });
+ 
